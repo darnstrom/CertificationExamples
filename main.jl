@@ -3,24 +3,35 @@ using Pkg
 Pkg.instantiate()
 Pkg.activate(".")
 using ASCertain
-using CertificationTools:plot_partition
 using LinearMPC:mpc_examples 
 
-## Setup problem 
+## Run certification 
 
-mpQP, Θ = mpc_examples("invpend");
-#mpQP, Θ = mpc_examples("aircraft");
-#mpQP, Θ = mpc_examples("dcmotor");
-cert_prob = DualCertProblem(mpQP,normalize=false);
-cert_prob,Θ,mpQP = ASCertain.normalize(cert_prob,Θ,mpQP);
-
-
-## Run certification
+# Setup settings
 opts = CertSettings();
-opts.storage_level = 2; # Store all regions
-opts.verbose = 1; # Only print final results
-AS = Int64[];
-@time (part,iter_max) = certify(cert_prob,Θ,AS,opts);
+opts.storage_level = 2; # 0 store nothing, 2 store everything
+opts.compute_chebyball = false;
+opts.store_regions = true;
+opts.minrep_regions = false;
+
+# Warm up (to invoke compilation)
+opts.verbose = 0 
+mpQP_pre,Θ_pre,_ = mpc_examples("invpend");
+certify(mpQP_pre,Θ_pre,Int64[]; opts,normalize=false);
+# Run the actual example
+opts.verbose = 1
+results = []
+for example in ["invpend","dcmotor", "nonlinear", "aircraft"]
+    print("\n >>>>>>>>>>> $example <<<<<<<<<<<< ")
+    mpQP,Θ,mpc = mpc_examples(example);
+    @time (part,iter_max,_,ASs) = certify(mpQP,Θ,Int64[]; opts,normalize=false);
+    push!(results,part)
+end
+
 
 ## Visualize result
-plot_partition(part)
+if opts.storage_level > 0 && opts.store_regions==true
+    for r in results
+        display(ASCertain.pplot(r))
+    end
+end
