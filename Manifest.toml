@@ -103,7 +103,7 @@ uuid = "e66e0078-7015-5450-92f7-15fbd957f2ae"
 
 [[deps.DAQP]]
 deps = ["DAQP_jll", "LinearAlgebra", "MathOptInterface"]
-path = "/home/daniel/Projects/Research/code/Julia/DAQP.jl/"
+git-tree-sha1 = "259e9adf4a4ba19aeeaee7cca161f796465933bb"
 uuid = "c47d62df-3981-49c8-9651-128b1cd08617"
 version = "0.4.2"
 
