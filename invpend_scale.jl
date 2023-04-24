@@ -17,7 +17,7 @@ opts.verbose = 0
 mpQP_pre,Θ_pre,_ = mpc_examples("invpend");
 part_pre,iter_max_pre,_,_ASs_pre = certify(mpQP_pre,Θ_pre,Int64[]; opts);
 # Run the actual example
-for N in 2:2:10
+for N in 2:2:16
     println(">>>>>>>>>> N = $N <<<<<<<<<<<<<<")
     mpQP,Θ,mpc = mpc_examples("invpend",50,N);
     @time (part,iter_max,_,ASs) = certify(mpQP,Θ,Int64[]; opts);
